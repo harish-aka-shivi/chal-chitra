@@ -17,25 +17,21 @@ import java.util.zip.Inflater;
  */
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.PlaceViewHolder> {
     ArrayList<String> mPosterPath;
+    ArrayList<Movie> movieArrayList;
     Context mContext;
     private static final String BASE_URL = "http://image.tmdb.org/t/p/w342";
 
-    public RecyclerViewAdapter(ArrayList<String> posterPath, Context context) {
-        mPosterPath = posterPath;
+    public RecyclerViewAdapter(ArrayList<Movie> movieArrayList, Context context) {
+        this.movieArrayList = movieArrayList;
         mContext = context;
     }
     public static class PlaceViewHolder extends RecyclerView.ViewHolder {
         ImageView poster;
-        TextView trialText;
         public PlaceViewHolder(View itemView) {
             super(itemView);
             poster = (ImageView) itemView.findViewById(R.id.poster);
-            //trialText = (TextView) itemView.findViewById(R.id.trial_text);
         }
     }
-    //public void setPosterUrlArraylist(ArrayList<String> posterPath) {
-    //    mPosterPath = posterPath;
-    //}
 
     @Override
     public PlaceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -46,18 +42,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(PlaceViewHolder holder, int position) {
+
+        //get the imageview
         ImageView imageView = holder.poster;
-        String imageUrl = mPosterPath.get(position);
+
+        //get the movie from movieArrayList
+        Movie movie = movieArrayList.get(position);
+        String imageUrl = movie.getPosterUrl();
+
+        //final poster path with image url appended
         String finalPosterPath = BASE_URL+imageUrl;
-        //imageView.setImageResource(R.mipmap.ic_launcher);
-        //String trial = BASE_URL + "/lIv1QinFqz4dlp5U4lQ6HaiskOZ.jpg";
+
+        //loading with picasso library
         Picasso.with(mContext).load(finalPosterPath).into(imageView);
-        /*TextView textView  = holder.trialText;
-        textView.setText("this is great");*/
     }
 
     @Override
     public int getItemCount() {
-        return mPosterPath.size();
+        return movieArrayList.size();
     }
 }

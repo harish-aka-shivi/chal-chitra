@@ -19,13 +19,14 @@ import java.util.ArrayList;
 /**
  * Created by root on 17/3/16.
  */
-public class FetchMoviesTask extends AsyncTask<String,Void,ArrayList<String>> {
+public class FetchMoviesTask extends AsyncTask<String,Void,ArrayList<Movie>> {
     static final String LOG_TAG = "Fetch_Movies_Task";
     static String API_KEY = "a1f357995447ec4b6c7c576d5531e90a";
     String jsonMoviesString;
     Context mContext;
     MainFragment.FragmentCallback mFragmentCallback;
     ArrayList<String> posterUrl = new ArrayList<String>();
+    ArrayList<Movie> movieArrayList = new ArrayList<>();
 
     public FetchMoviesTask(Context context, MainFragment.FragmentCallback fragmentCallback) {
         mContext = context;
@@ -33,7 +34,7 @@ public class FetchMoviesTask extends AsyncTask<String,Void,ArrayList<String>> {
     }
 
     @Override
-    protected ArrayList<String> doInBackground(String... params) {
+    protected ArrayList<Movie> doInBackground(String... params) {
         HttpURLConnection httpURLConnection = null;
         BufferedReader bufferedReader = null;
         String sortCriteria = params[0];
@@ -62,27 +63,56 @@ public class FetchMoviesTask extends AsyncTask<String,Void,ArrayList<String>> {
                 if(inputStream == null) {
                     return null;
                 }
+                //read the json page
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
                 while ((line =bufferedReader.readLine()) != null) {
                     stringBuffer.append(line + "\n");
                 }
+                // if length of read data is 0 return null
                 if(stringBuffer.length() == 0) {
                     return null;
                 }
 
                 jsonMoviesString = stringBuffer.toString();
-                final String TMDB_result_key = "results";
-                final String poster_path_key = "poster_path";
+
+                // all the json_keys needed for data required
+                final String TMDB_RESULT_KEY = "results";
+                final String POSTER_PATH_KEY = "poster_path";
+                final String TITLE_KEY = "title";
+                final String RELEASE_DATE_KEY = "release_date";
+                final String VOTE_AVERAGE_KEY = "vote_average";
+                final String OVERVIEW_KEY = "overview";
+
+                //get the json string to be parsed
                 JSONObject moviesJson = new JSONObject(jsonMoviesString);
-                JSONArray moviesArray = moviesJson.getJSONArray(TMDB_result_key);
+                JSONArray moviesArray = moviesJson.getJSONArray(TMDB_RESULT_KEY);
                 int len = moviesArray.length();
 
                 // store all image urls in an ArrayList
                 for (int i=0;i< len;i++) {
                     JSONObject movieInstance = moviesArray.getJSONObject(i);
-                    String posterPath = movieInstance.getString(poster_path_key);
+
+                    //Initialize all the movie parameter required
+                    String posterPath = movieInstance.getString(POSTER_PATH_KEY);
+                    String title = movieInstance.getString(TITLE_KEY);
+                    String release_date = movieInstance.getString(RELEASE_DATE_KEY);
+                    String vote_average = movieInstance.getString(VOTE_AVERAGE_KEY);
+                    String overview = movieInstance.getString(OVERVIEW_KEY);
+
+                    //Initialize the movie instance and assign all parameters
+                    Movie movie = new Movie();
+                    movie.setDate(release_date);
+                    movie.setPlot(overview);
+                    movie.setPosterUrl(posterPath);
+                    movie.setVoteAverage(vote_average);
+                    movie.setTitle(title);
+
+                    //Add the movie to the arraylist of movies
+                    movieArrayList.add(movie);
+
                     posterUrl.add(posterPath);
+
                 }
             }
             catch (java.io.IOException e){
@@ -106,74 +136,16 @@ public class FetchMoviesTask extends AsyncTask<String,Void,ArrayList<String>> {
                     }
                 }
             }
-            }
-
-            /*final String MOVIES_BASE_URL = "https://api.themoviedb.org/3/movie/" + sortCriteria +"?";
-            final String api_key = "api_key";
-
-            //build uri
-            Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon().appendQueryParameter(api_key,API_KEY).build();
-            URL url = new URL(builtUri.toString());
-
-            //get connection
-            httpURLConnection = (HttpURLConnection)  url.openConnection();
-            httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.connect();
-            InputStream inputStream = httpURLConnection.getInputStream();
-            StringBuffer stringBuffer  = new StringBuffer();
-
-            // if stream is null do nothing
-            if(inputStream == null) {
-                return null;
-            }
-            bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-            while ((line =bufferedReader.readLine()) != null) {
-                stringBuffer.append(line + "\n");
-            }
-            if(stringBuffer.length() == 0) {
-                return null;
-            }
-
-            jsonMoviesString = stringBuffer.toString();
-            final String TMDB_result_key = "results";
-            final String poster_path_key = "poster_path";
-            JSONObject moviesJson = new JSONObject(jsonMoviesString);
-            JSONArray moviesArray = moviesJson.getJSONArray(TMDB_result_key);
-            int len = moviesArray.length();
-            for (int i=0;i< len;i++) {
-                JSONObject movieInstance = moviesArray.getJSONObject(i);
-                String posterPath = movieInstance.getString(poster_path_key);
-                posterUrl.add(posterPath);
-            }
         }
-        catch (java.io.IOException e){
-            Log.e("Chalchitra",e.toString());
-        }
-        catch (org.json.JSONException e) {
-            Log.e("Chalchitra", e.toString());
-        }
-        finally {
-            if (httpURLConnection != null) {
-                httpURLConnection.disconnect();
-            }
-            if (bufferedReader != null) {
-                try {
-                    bufferedReader.close();
-                }
-                catch (IOException e) {
-                    Log.e(LOG_TAG,e.toString());
-                }
-            }
-        }*/
-        return posterUrl;
+        //return posterUrl;
+        return movieArrayList;
     }
 
     @Override
-    protected void onPostExecute(ArrayList<String> strings) {
-        super.onPostExecute(strings);
+    protected void onPostExecute(ArrayList<Movie> movies) {
+        super.onPostExecute(movies);
         //RecyclerViewAdapter.setPosterUrlArraylist(strings);
-        mFragmentCallback.onTaskDone(strings);
+        mFragmentCallback.onTaskDone(movies);
     }
 }
 
