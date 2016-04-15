@@ -3,7 +3,7 @@
     <string name="title_activity_detail">DetailActivity</string>
     <string name="action_settings">Settings</string>
     <string-array name="criteria_array">
-        <item>"top_rated"</item>
         <item>popular</item>
+        <item>top_rated</item>
     </string-array>
 </resources>

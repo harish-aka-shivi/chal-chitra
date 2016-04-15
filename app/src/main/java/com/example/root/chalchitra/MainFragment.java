@@ -64,14 +64,16 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                         Movie movie = mAdapter.movieArrayList.get(position);
                         Gson gson = new Gson();
                         String json = gson.toJson(movie);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(MOVIE_DETAILS,json);
+
                         Intent intent = new Intent(getActivity(),DetailActivity.class);
                         intent.putExtra(MOVIE_DETAILS,json);
                         startActivity(intent);
-
                     }
                 }));
-        updateMovies();
         setHasOptionsMenu(true);
+        updateMovies();
         return rootView;
     }
     //a1f357995447ec4b6c7c576d5531e90a key

@@ -8,7 +8,51 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".DetailFragment">
 
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id ="@+id/toolbar_detail_fragment"></android.support.v7.widget.Toolbar>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/poster_View"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="false"
+        android:layout_below="@id/toolbar_detail_fragment"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="false"
+        android:layout_below="@id/toolbar_detail_fragment"
+        android:layout_toRightOf="@id/poster_View">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/release_view"
+            android:gravity="center_vertical|center_horizontal" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/time_view"
+            android:gravity="center_vertical|center_horizontal" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id= "@+id/rating_view"
+            android:gravity="center_horizontal|center_vertical"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/plot_view"
+        android:layout_below="@id/poster_View"/>
 </RelativeLayout>
 
 
