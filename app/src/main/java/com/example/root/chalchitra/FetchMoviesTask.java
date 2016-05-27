@@ -83,6 +83,7 @@ public class FetchMoviesTask extends AsyncTask<String,Void,ArrayList<Movie>> {
                 final String RELEASE_DATE_KEY = "release_date";
                 final String VOTE_AVERAGE_KEY = "vote_average";
                 final String OVERVIEW_KEY = "overview";
+                final String ID_KEY = "id";
 
                 //get the json string to be parsed
                 JSONObject moviesJson = new JSONObject(jsonMoviesString);
@@ -99,6 +100,7 @@ public class FetchMoviesTask extends AsyncTask<String,Void,ArrayList<Movie>> {
                     String release_date = movieInstance.getString(RELEASE_DATE_KEY);
                     String vote_average = movieInstance.getString(VOTE_AVERAGE_KEY);
                     String overview = movieInstance.getString(OVERVIEW_KEY);
+                    String id = movieInstance.getString(ID_KEY);
 
                     //Initialize the movie instance and assign all parameters
                     Movie movie = new Movie();
@@ -107,6 +109,7 @@ public class FetchMoviesTask extends AsyncTask<String,Void,ArrayList<Movie>> {
                     movie.setPosterUrl(posterPath);
                     movie.setVoteAverage(vote_average);
                     movie.setTitle(title);
+                    movie.setId(id);
 
                     //Add the movie to the arraylist of movies
                     movieArrayList.add(movie);
@@ -144,7 +147,6 @@ public class FetchMoviesTask extends AsyncTask<String,Void,ArrayList<Movie>> {
     @Override
     protected void onPostExecute(ArrayList<Movie> movies) {
         super.onPostExecute(movies);
-        //RecyclerViewAdapter.setPosterUrlArraylist(strings);
         mFragmentCallback.onTaskDone(movies);
     }
 }

@@ -94,8 +94,8 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 movieList.clear();
                 movieList.addAll(movieArrayList);
                 mAdapter.notifyDataSetChanged();
-
             };});
+
         fetchMoviesTask.execute(PARAM_MOVIE);
     }
 

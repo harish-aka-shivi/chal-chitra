@@ -14,15 +14,21 @@ public class Movie implements Serializable{
     String voteAverage;
     String plot;
     String posterUrl;
+    String id;
 
     public Movie(){}
 
-    public Movie(String title, String date, String voteAverage, String plot, String posterUrl) {
+    public Movie(String id,String title, String date, String voteAverage, String plot, String posterUrl) {
         this.title = title;
         this.date = date;
         this.voteAverage = voteAverage;
         this.plot = plot;
         this.posterUrl = posterUrl;
+        this.id = id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setTitle(String title) {
@@ -63,6 +69,10 @@ public class Movie implements Serializable{
 
     public String getVoteAverage() {
         return voteAverage;
+    }
+
+    public String getId() {
+        return id;
     }
 }
 
