@@ -54,7 +54,7 @@ public class FetchReviewsTask extends AsyncTask<String,Void,ArrayList<Review>>{
                     (API_KEY_PARAM,BuildConfig.TMDB_API_KEY).build();
             URL reviewsUrl = new URL(reviewsUri.toString());
             httpURLConnection = (HttpURLConnection) reviewsUrl.openConnection();
-            httpURLConnection.setRequestMethod("Get");
+            httpURLConnection.setRequestMethod("GET");
             httpURLConnection.connect();
 
             InputStream inputStream = httpURLConnection.getInputStream();
@@ -69,12 +69,7 @@ public class FetchReviewsTask extends AsyncTask<String,Void,ArrayList<Review>>{
             }
             reviewsJsonString = stringBuffer.toString();
             getReviewsFromJson(reviewsJsonString);
-            Uri videosUri = Uri.parse(VIDEOS_URL_STRING).buildUpon().appendQueryParameter
-                    (API_KEY_PARAM,BuildConfig.TMDB_API_KEY).build();
-            URL videosUrl = new URL(videosUri.toString());
-            httpURLConnection = (HttpURLConnection) videosUrl.openConnection();
-            httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.connect();
+
         }
 
         catch (MalformedURLException e) {
@@ -107,28 +102,23 @@ public class FetchReviewsTask extends AsyncTask<String,Void,ArrayList<Review>>{
         String author;
         int totalResults;
 
+        JSONObject reviewsJson = new JSONObject(reviewsJsonString);
+        JSONArray resultsArray = reviewsJson.getJSONArray(TMDB_RESULTS_ARRAY);
+        totalPages = reviewsJson.getInt(TMDB_TOTAL_PAGES);
+        totalResults = reviewsJson.getInt(TMDB_TOTAL_RESULTS);
 
-        try {
-            JSONObject reviewsJson = new JSONObject(reviewsJsonString);
-            JSONArray resultsArray = reviewsJson.getJSONArray(TMDB_RESULTS_ARRAY);
-            totalPages = reviewsJson.getInt(TMDB_TOTAL_PAGES);
-            totalResults = reviewsJson.getInt(TMDB_TOTAL_RESULTS);
-
-            for (int i = 0; i < totalResults; i++) {
-                JSONObject reviewObject = resultsArray.getJSONObject(i);
-                author = reviewObject.getString(TMDB_AUTHOR);
-                content = reviewObject.getString(TMDB_CONTENT);
-                mReviewList.add(new Review(author,content));
-            }
-        } catch (JSONException e) {
-            Log.e(LOG_TAG,e.toString());
+        for (int i = 0; i < totalResults; i++) {
+            JSONObject reviewObject = resultsArray.getJSONObject(i);
+            author = reviewObject.getString(TMDB_AUTHOR);
+            content = reviewObject.getString(TMDB_CONTENT);
+            mReviewList.add(new Review(author, content));
         }
     }
 
     @Override
     protected void onPostExecute(ArrayList<Review> reviews) {
         super.onPostExecute(reviews);
-
+        mFragmentCallback.onTaskDone(reviews);
     }
 }
 

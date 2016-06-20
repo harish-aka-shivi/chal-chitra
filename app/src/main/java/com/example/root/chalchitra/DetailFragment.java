@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -27,7 +28,7 @@ public class DetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         Bundle bundle = getArguments();
         String moviesJson = bundle.getString(MainFragment.MOVIE_DETAILS);
 
@@ -37,6 +38,7 @@ public class DetailFragment extends Fragment {
         String rating = mMovie.getVoteAverage();
         String release = mMovie.getDate();
         String posterUrl = mMovie.getPosterUrl();
+        String id = mMovie.getId();
         String finalUrl = BASE_URL+posterUrl;
 
         ImageView posterView = (ImageView) rootView.findViewById(R.id.poster_View);
@@ -51,11 +53,17 @@ public class DetailFragment extends Fragment {
 
         new FetchReviewsTask(getContext(), new FragmentCallback() {
             @Override
-            public void onTaskDone() {
-
+            public void onTaskDone(ArrayList<Review> reviews) {
+                String reviewsString = "demo";
+                Iterator<Review> iterator = reviews.iterator();
+                while (iterator.hasNext()) {
+                    reviewsString = reviewsString + iterator.next().getContent();
+                    reviewsString = reviewsString + "\n";
+                }
+                TextView reviewsView = (TextView) rootView.findViewById(R.id.reviews_view);
+                reviewsView.setText(reviewsString);
             }
-        })
-
+        }).execute(id);
         return rootView;
     }
     public void setReviewArrayList(ArrayList<Review> arrayList) {
@@ -63,6 +71,6 @@ public class DetailFragment extends Fragment {
     }
 
     public interface FragmentCallback {
-        void onTaskDone ();
+        void onTaskDone (ArrayList<Review> reviews);
     }
 }
