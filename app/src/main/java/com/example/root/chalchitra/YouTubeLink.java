@@ -3,11 +3,11 @@ package com.example.root.chalchitra;
 /**
  * Created by root on 20/6/16.
  */
-public class VideosDetail {
+public class YouTubeLink {
     String youTubeKey;
     String name;
 
-    public VideosDetail(String key, String name) {
+    public YouTubeLink(String key, String name) {
         this.youTubeKey = key;
         this.name = name;
     }

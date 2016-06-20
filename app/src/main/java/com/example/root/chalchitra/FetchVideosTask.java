@@ -1,5 +1,6 @@
 package com.example.root.chalchitra;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -20,13 +21,20 @@ import java.util.ArrayList;
 /**
  * Created by root on 18/6/16.
  */
-public class FetchVideosTask extends AsyncTask<String,Void,ArrayList<VideosDetail>> {
-
+public class FetchVideosTask extends AsyncTask<String,Void,ArrayList<YouTubeLink>> {
     static final String LOG_TAG = "FetchVideosTask";
-    private ArrayList<VideosDetail> mVideosDetail;
+    private ArrayList<YouTubeLink> mYouTubeLinks;
+    private Context mContext;
+    private DetailFragment.YouTubeFragmentCallback mYouTubeFragmentCallback;
+
+    public FetchVideosTask(Context context,DetailFragment.YouTubeFragmentCallback youTubeFragmentCallback) {
+        mContext = context;
+        mYouTubeFragmentCallback = youTubeFragmentCallback;
+    }
+
     @Override
-    protected ArrayList<VideosDetail> doInBackground(String... params) {
-        mVideosDetail = new ArrayList<>();
+    protected ArrayList<YouTubeLink> doInBackground(String... params) {
+        mYouTubeLinks = new ArrayList<>();
         String id = params[0];
 
         final String BASE_URL = " https://api.themoviedb.org/3/movie/";
@@ -34,6 +42,7 @@ public class FetchVideosTask extends AsyncTask<String,Void,ArrayList<VideosDetai
         final String VIDEOS = "videos";
         final String VIDEOS_URL_STRING = BASE_URL_WITH_ID + VIDEOS;
         String reviewsJsonString = null;
+
         HttpURLConnection httpURLConnection;
         BufferedReader bufferedReader;
 
@@ -45,26 +54,25 @@ public class FetchVideosTask extends AsyncTask<String,Void,ArrayList<VideosDetai
             httpURLConnection = (HttpURLConnection) reviewsUrl.openConnection();
             httpURLConnection.setRequestMethod("GET");
             httpURLConnection.connect();
-
-
             InputStream inputStream = httpURLConnection.getInputStream();
+
             if (inputStream == null) {
                 return null;
             }
+
             StringBuffer stringBuffer = new StringBuffer();
             bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 stringBuffer.append(line + "\n");
             }
+
             reviewsJsonString = stringBuffer.toString();
             getVideosUrlFromJson(reviewsJsonString);
         }
-
         catch (MalformedURLException e) {
             Log.e(LOG_TAG, e.toString());
         }
-
         catch (IOException e) {
             Log.e(LOG_TAG, e.toString());
         }
@@ -72,7 +80,7 @@ public class FetchVideosTask extends AsyncTask<String,Void,ArrayList<VideosDetai
             Log.e(LOG_TAG, e.toString());
         }
 
-        return mVideosDetail;
+        return mYouTubeLinks;
     }
 
     void getVideosUrlFromJson(String reviewsJsonString) throws JSONException {
@@ -90,12 +98,18 @@ public class FetchVideosTask extends AsyncTask<String,Void,ArrayList<VideosDetai
         JSONArray jsonArray = jsonObject.getJSONArray(VIDEOS_DETAIL_RESULTS_ARRAY);
         int length = jsonArray.length();
 
+        // add YouTubeLink to the arraylist
         for(int i = 0; i < length; i++) {
             JSONObject videosObject = jsonArray.getJSONObject(i);
             name = videosObject.getString(VIDEOS_DETAIL_NAME);
             youTubeKey = videosObject.getString(VIDEOS_DETAIL_KEY);
-            mVideosDetail.add(new VideosDetail(youTubeKey,name));
+            mYouTubeLinks.add(new YouTubeLink(youTubeKey,name));
         }
     }
 
+    @Override
+    protected void onPostExecute(ArrayList<YouTubeLink> youTubeLinks) {
+        super.onPostExecute(youTubeLinks);
+        mYouTubeFragmentCallback.onTaskDone(youTubeLinks);
+    }
 }
