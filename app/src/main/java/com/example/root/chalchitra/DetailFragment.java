@@ -1,5 +1,9 @@
 package com.example.root.chalchitra;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,6 +28,7 @@ public class DetailFragment extends Fragment {
     private static final String BASE_URL = "http://image.tmdb.org/t/p/w342";
     Movie mMovie;
     ArrayList<Review> reviewArrayList;
+    private static final String youTubeVideoUri =  "https://www.youtube.com/watch?v=";
 
     public DetailFragment() {}
 
@@ -49,7 +54,7 @@ public class DetailFragment extends Fragment {
         //Get all the views
         ImageView posterView = (ImageView) rootView.findViewById(R.id.poster_View);
         TextView releaseView = (TextView)  rootView.findViewById(R.id.release_view);
-        TextView ratingView = (TextView)  rootView.findViewById(R.id.rating_view);
+        final TextView ratingView = (TextView)  rootView.findViewById(R.id.rating_view);
         TextView plot_View = (TextView) rootView.findViewById(R.id.plot_view);
         final LinearLayout youTubeLinksView = (LinearLayout) rootView.findViewById(R.id.youTube_links_layout);
 
@@ -58,6 +63,7 @@ public class DetailFragment extends Fragment {
         releaseView.setText(release);
         ratingView.setText(rating);
         plot_View.setText(plot);
+
 
         //Callback for showing Reviews
         new FetchReviewsTask(getContext(), new FragmentCallback() {
@@ -78,11 +84,22 @@ public class DetailFragment extends Fragment {
         new FetchVideosTask(getContext(), new YouTubeFragmentCallback() {
             @Override
             public void onTaskDone(ArrayList<YouTubeLink> youTubeLinks) {
-                Iterator<YouTubeLink> iterator = youTubeLinks.iterator();
+                final Iterator<YouTubeLink> iterator = youTubeLinks.iterator();
                 while (iterator.hasNext()) {
-                    String buttonText = iterator.next().getName();
+                    final YouTubeLink youTubeLink = iterator.next();
+                    String buttonText =youTubeLink.getName();
                     Button button = new Button(getActivity());
                     button.setText(buttonText);
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String key = youTubeLink.getKey();
+                            String finalYouTubeUrl = youTubeVideoUri+key;
+                            Uri youTubeLinkUri = Uri.parse(finalYouTubeUrl);
+                            Intent intent = new Intent(Intent.ACTION_VIEW,youTubeLinkUri);
+                            startActivity(intent);
+                        }
+                    });
                     youTubeLinksView.addView(button);
                 }
             }

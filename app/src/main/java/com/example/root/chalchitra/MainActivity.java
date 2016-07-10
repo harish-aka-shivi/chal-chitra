@@ -22,15 +22,4 @@ public class MainActivity extends AppCompatActivity {
         spinner.setAdapter(arrayAdapter);
 
     }
-
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main,menu);
-        Spinner spinner = (Spinner) findViewById(R.id.menu_spinner);
-        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this,
-                R.array.criteria_array,android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(arrayAdapter);
-        return true;
-    }*/
 }

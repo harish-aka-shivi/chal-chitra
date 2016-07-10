@@ -1,6 +1,7 @@
 package com.example.root.chalchitra;
 
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,10 +37,13 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     private String PARAM_MOVIE;
     public static final String LOG_TAG = "Main Fragment";
     public static final String MOVIE_DETAILS = "movie_detail";
+    private static final int VERTICAL_ITEM_SPACE = 20;
+    private static final int HORIZONTAL_ITEM_SPACE = 10;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_main,null);
 
@@ -47,6 +51,8 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         movieList = new ArrayList<>();
 
+        recyclerView.addItemDecoration(new VerticalSpaceDecoration(VERTICAL_ITEM_SPACE));
+        recyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(HORIZONTAL_ITEM_SPACE));
         // Initialize the adapter
         mAdapter = new RecyclerViewAdapter(movieList,getContext());
 
@@ -56,22 +62,7 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
 
         // add an adapter
         recyclerView.setAdapter(mAdapter);
-        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(),
-                new RecyclerItemClickListener.OnItemClickListener(){
-                    @Override
-                    public void onItemClick(View view, int position) {
-                        //Log.d(LOG_TAG,"this is detail activity trial");
-                        Movie movie = mAdapter.movieArrayList.get(position);
-                        Gson gson = new Gson();
-                        String json = gson.toJson(movie);
-                        Bundle bundle = new Bundle();
-                        bundle.putString(MOVIE_DETAILS,json);
 
-                        Intent intent = new Intent(getActivity(),DetailActivity.class);
-                        intent.putExtra(MOVIE_DETAILS,json);
-                        startActivity(intent);
-                    }
-                }));
         setHasOptionsMenu(true);
         updateMovies();
         return rootView;
@@ -120,5 +111,40 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_main, menu);
+    }
+
+    public class VerticalSpaceDecoration extends RecyclerView.ItemDecoration {
+        private final int mVerticalSpaceHeight;
+
+        public VerticalSpaceDecoration(int verticalSpaceHeight) {
+            mVerticalSpaceHeight = verticalSpaceHeight;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                   RecyclerView.State state) {
+            outRect.bottom = mVerticalSpaceHeight;
+
+            //super.getItemOffsets(outRect, view, parent, state);
+        }
+    }
+
+    /*
+   Adding horizontal space in RecyclerView
+   */
+    public class HorizontalSpaceItemDecoration extends RecyclerView.ItemDecoration {
+        private final int mHorizontalSpaceHeight;
+
+        public HorizontalSpaceItemDecoration(int mHorizontalSpaceHeight) {
+            this.mHorizontalSpaceHeight = mHorizontalSpaceHeight;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
+                                   RecyclerView.State state) {
+            outRect.left = mHorizontalSpaceHeight;
+            outRect.right = mHorizontalSpaceHeight;
+        }
+
     }
 }

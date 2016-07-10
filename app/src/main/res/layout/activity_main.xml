@@ -24,7 +24,7 @@ tools:context="com.example.root.chalchitra.DetailActivity">
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="?attr/colorPrimary"
-            android:gravity="center_vertical|right">
+            android:popupTheme="@style/AppTheme.PopupOverlay">
         </Spinner>
     </android.support.v7.widget.Toolbar>
 

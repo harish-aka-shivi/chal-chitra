@@ -1,3 +1,4 @@
+/*
 package com.example.root.chalchitra;
 
 import android.content.Context;
@@ -7,9 +8,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 
+*/
 /**
  * Created by root on 13/4/16.
- */
+ *//*
+
 public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
     private OnItemClickListener mOnItemClickListener;
 
@@ -45,3 +48,4 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
     @Override
     public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
 }
+*/
