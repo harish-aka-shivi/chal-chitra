@@ -60,9 +60,9 @@ public class DetailFragment extends Fragment {
 
         //set content to the views
         Picasso.with(getContext()).load(finalUrl).into(posterView);
-        releaseView.setText(release);
-        ratingView.setText(rating);
-        plot_View.setText(plot);
+        releaseView.setText("Release: "+release);
+        ratingView.setText("Rating: " + rating);
+        plot_View.setText(plot + "\n\n");
 
 
         //Callback for showing Reviews
@@ -88,7 +88,9 @@ public class DetailFragment extends Fragment {
                 while (iterator.hasNext()) {
                     final YouTubeLink youTubeLink = iterator.next();
                     String buttonText =youTubeLink.getName();
-                    Button button = new Button(getActivity());
+                    //check for context before calling the context method.
+                    if (getContext() == null) return;
+                    Button button = new Button(getContext());
                     button.setText(buttonText);
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override

@@ -1,8 +1,11 @@
 package com.example.root.chalchitra;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -32,13 +35,21 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     private RecyclerView recyclerView;
     private RecyclerViewAdapter mAdapter;
     private ArrayList<Movie> movieList;
-    private final String POPULAR = "popular";
-    private final String TOP_RATED = "top_rated";
-    private String PARAM_MOVIE;
+    public final String POPULAR = "popular";
+    public final String TOP_RATED = "top_rated";
+    public String PARAM_MOVIE ;
     public static final String LOG_TAG = "Main Fragment";
     public static final String MOVIE_DETAILS = "movie_detail";
     private static final int VERTICAL_ITEM_SPACE = 20;
     private static final int HORIZONTAL_ITEM_SPACE = 10;
+    public static final String CHALCHITRA_SHARED_PREFERENCE =
+            "com.example.root.chalchitra.sharedPreference";
+    //private final Spinner mSpinner;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Nullable
     @Override
@@ -87,6 +98,9 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
                 mAdapter.notifyDataSetChanged();
             };});
 
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences
+                (CHALCHITRA_SHARED_PREFERENCE,Context.MODE_PRIVATE);
+        PARAM_MOVIE = sharedPreferences.getString(getString(R.string.param),getString(R.string.def_value_choice));
         fetchMoviesTask.execute(PARAM_MOVIE);
     }
 
@@ -98,13 +112,27 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String choice = (String) parent.getItemAtPosition(position);
+        SharedPreferences sharedPreferences  = getActivity().getSharedPreferences
+                (CHALCHITRA_SHARED_PREFERENCE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(getActivity().getString(R.string.param),choice);
+        editor.commit();
         PARAM_MOVIE = choice;
         updateMovies();
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        PARAM_MOVIE = POPULAR;
+
+        //PARAM_MOVIE = POPULAR;
+        SharedPreferences sharedPreferences = getActivity().
+                getSharedPreferences(CHALCHITRA_SHARED_PREFERENCE,Context.MODE_PRIVATE);
+        String selection = sharedPreferences.getString(getString(R.string.param),
+                getString(R.string.def_value_choice));
+        if(selection == POPULAR) {
+            parent.setSelection(0);
+        }
+        else parent.setSelection(1);
     }
 
     @Override
@@ -124,7 +152,6 @@ public class MainFragment extends Fragment implements AdapterView.OnItemSelected
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
                                    RecyclerView.State state) {
             outRect.bottom = mVerticalSpaceHeight;
-
             //super.getItemOffsets(outRect, view, parent, state);
         }
     }

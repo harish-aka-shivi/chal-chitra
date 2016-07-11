@@ -1,6 +1,7 @@
 package com.example.root.chalchitra;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -37,7 +38,11 @@ public class FetchMoviesTask extends AsyncTask<String,Void,ArrayList<Movie>> {
     protected ArrayList<Movie> doInBackground(String... params) {
         HttpURLConnection httpURLConnection = null;
         BufferedReader bufferedReader = null;
-        String sortCriteria = params[0];
+        //String sortCriteria = params[0];
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences
+                (MainFragment.CHALCHITRA_SHARED_PREFERENCE,Context.MODE_PRIVATE);
+        String sortCriteria = sharedPreferences.getString(mContext.getString(R.string.param),
+                mContext.getString(R.string.def_value_choice));
         int initialPage = 1;
 
         // for loop to load two pages

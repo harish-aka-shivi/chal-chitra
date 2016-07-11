@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.io.Serializable;
@@ -24,19 +26,26 @@ public class DetailActivity extends AppCompatActivity {
             bundle.putString(MainFragment.MOVIE_DETAILS,jsonMovies);
             DetailFragment fragment = new DetailFragment();
             fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.movies_detail_container,fragment).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.movies_detail_container,
+                    fragment).commit();
         }
 
-/*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-*/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
+
+   /* @Override
+    public boolean onNavigateUp() {
+        return super.onNavigateUp();
+    }*/
+
+    /*@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+
+    }*/
 }

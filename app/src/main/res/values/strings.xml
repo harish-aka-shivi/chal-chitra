@@ -6,4 +6,6 @@
         <item>popular</item>
         <item>top_rated</item>
     </string-array>
+    <string name="param">PARAM_MOVIE</string>
+    <string name="def_value_choice">popular</string>
 </resources>
